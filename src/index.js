@@ -1,21 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { BrowserRouter } from 'react-router-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-// This is a known issue with recharts and ResizeObserver
-// It's a benign error and can be safely ignored.
-const RO_ERROR_MSG = 'ResizeObserver loop completed with undelivered notifications';
-window.addEventListener('error', e => {
-  if (e.message === RO_ERROR_MSG) {
-    // Prevent the error from appearing in the console
-    e.stopImmediatePropagation();
-  }
-});
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <App />
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
   </React.StrictMode>
 );
 
