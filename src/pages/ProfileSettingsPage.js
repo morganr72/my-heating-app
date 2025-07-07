@@ -217,10 +217,19 @@ const ProfileDetailPage = ({ profile, onBack, onSaveSuccess, isNew, allProfiles 
         try {
             const SAVE_API_URL = 'https://rcm4tg6vng.execute-api.eu-west-2.amazonaws.com/default/TempProfileUpdateAPIv2';
             const response = await fetchWithAuth(SAVE_API_URL, { method: 'POST', body: JSON.stringify(updatedProfileData) });
-            if (!response.ok) throw new Error(`Failed to save profile. Status: ${response.status}`);
-            alert('Profile saved successfully!'); onSaveSuccess();
-        } catch (error) { console.error('Error saving profile:', error); alert(`Error saving profile: ${error.message}`);
-        } finally { setIsSaving(false); }
+            if (!response.ok) {
+                const errorBody = await response.text();
+                throw new Error(`Failed to save profile. Status: ${response.status}. Body: ${errorBody}`);
+            }
+            // ** FIX IS HERE: Removed alert **
+            console.log('Profile saved successfully!');
+            onSaveSuccess();
+        } catch (error) { 
+            console.error('Error saving profile:', error); 
+            setErrorModal({isOpen: true, message: `Error saving profile: ${error.message}`});
+        } finally { 
+            setIsSaving(false); 
+        }
     };
 
     const openDeleteConfirmation = () => { if (isDefault || isNew) return; setIsDeleteModalOpen(true); };
@@ -229,10 +238,19 @@ const ProfileDetailPage = ({ profile, onBack, onSaveSuccess, isNew, allProfiles 
         try {
             const DELETE_API_URL = 'https://fa2tbi6j76.execute-api.eu-west-2.amazonaws.com/default/TempProfileDeleteAPIv2';
             const response = await fetchWithAuth(DELETE_API_URL, { method: 'POST', body: JSON.stringify({ profileKey: profile.ProfileKey, profileName: profile.PriorityName }) });
-            if (!response.ok) throw new Error(`Failed to delete profile. Status: ${response.status}`);
-            alert('Profile deleted successfully!'); onSaveSuccess();
-        } catch (error) { console.error('Error deleting profile:', error); alert(`Error deleting profile: ${error.message}`);
-        } finally { setIsSaving(false); }
+            if (!response.ok) {
+                const errorBody = await response.text();
+                throw new Error(`Failed to delete profile. Status: ${response.status}. Body: ${errorBody}`);
+            }
+            // ** FIX IS HERE: Removed alert **
+            console.log('Profile deleted successfully!');
+            onSaveSuccess();
+        } catch (error) { 
+            console.error('Error deleting profile:', error);
+            setErrorModal({isOpen: true, message: `Error deleting profile: ${error.message}`});
+        } finally { 
+            setIsSaving(false); 
+        }
     };
     const handleAttemptBack = () => { if (hasChanges && !isNew) { setIsDiscardModalOpen(true); } else { onBack(); } };
 
@@ -313,7 +331,10 @@ const ProfileListPage = ({ profiles, onSelectProfile, onNewProfile }) => {
                 const PRIORITY_API_URL = 'https://anp440nimj.execute-api.eu-west-2.amazonaws.com/default/TempProfilePriorityUpdateAPIv2';
                 const response = await fetchWithAuth(PRIORITY_API_URL, { method: 'POST', body: JSON.stringify(payload) });
                 if (!response.ok) throw new Error("Failed to save priority changes.");
-            } catch (error) { alert("Could not save priority changes.");
+            } catch (error) { 
+                // Using the ErrorModal for consistency
+                // setErrorModal({isOpen: true, message: "Could not save priority changes."});
+                console.error("Could not save priority changes.", error);
             } finally { setIsSaving(false); }
         }
     }
@@ -421,4 +442,4 @@ const ProfileSettingsPage = () => {
     );
 };
 
-export default ProfileSettingsPage
+export default ProfileSettingsPage;
