@@ -130,7 +130,7 @@ const HeatingDashboard = ({ dashboardData, onBoostClick, isBoosting }) => {
 
     return (
         <div className="flex-grow flex flex-col items-center justify-around px-6 text-center z-10 w-full text-white py-4">
-            <div className="text-4xl font-bold flex items-center"><span className="text-2xl opacity-70 mr-2">+</span>£{dashboardData.weeklySavings.toFixed(2)}<span className="text-2xl opacity-70 ml-2">+</span></div>
+            <div className="text-4xl font-bold flex items-center"><span className="text-2xl opacity-70 mr-2">+</span>£{dashboardData.weeklySavings.toFixed(1)}<span className="text-2xl opacity-70 ml-2">+</span></div>
             <div className="relative w-80 h-80 flex-shrink-0">
                 <div className="absolute inset-0 bg-gradient-to-b from-[rgba(255,255,255,0.2)] to-[rgba(255,255,255,0)] rounded-full"></div>
                 <div className="absolute inset-[15px] rounded-full" style={{ background: gaugeGradient, mask: 'radial-gradient(transparent 100px, white 101px)', WebkitMask: 'radial-gradient(transparent 100px, white 101px)',}}></div>
@@ -142,7 +142,7 @@ const HeatingDashboard = ({ dashboardData, onBoostClick, isBoosting }) => {
                     <div className="text-xs opacity-80 mt-1">ROOM TEMPERATURE</div>
                 </div>
             </div>
-            <p className="text-sm">The Water Temperature is {dashboardData.waterTemperature}°C</p>
+            <p className="text-sm">The Water Temperature is {dashboardData.waterTemperature.toFixed(1)}°C</p>
             
             <div className="bg-black/10 backdrop-blur-sm border border-white/10 rounded-xl p-2">
                 <StatusDisplay status={dashboardData.running_status} />
