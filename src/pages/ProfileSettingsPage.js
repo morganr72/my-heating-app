@@ -173,19 +173,30 @@ const ProfileDetailPage = ({ profile, onBack, onSaveSuccess, isNew, allProfiles 
     const handleChunkClick = (chunkData, isFirst, isLast) => { setSelectedChunk({ ...chunkData, isFirst, isLast }); setIsNewPeriod(false); setIsModalOpen(true); };
     const handleNewPeriod = () => { setSelectedChunk(null); setIsNewPeriod(true); setIsModalOpen(true); };
     const handleCloseModal = () => { setIsModalOpen(false); setSelectedChunk(null); setIsNewPeriod(false); };
-    const handleModalSubmit = (updatedData) => {
-        // FIX: Allow for periods that end at midnight (00:00)
-        if (updatedData.startTime >= updatedData.endTime && updatedData.endTime !== '00:00') {
-            setErrorModal({ isOpen: true, message: 'Start time must be before end time.' });
-            return;
+const handleModalSubmit = (updatedData) => {
+    if (updatedData.startTime >= updatedData.endTime && updatedData.endTime !== '00:00') {
+        setErrorModal({ isOpen: true, message: 'Start time must be before end time.' });
+        return;
+    }
+    if ((Number(updatedData.highTemp) - Number(updatedData.lowTemp)) < 1) {
+        setErrorModal({ isOpen: true, message: 'Max temp must be at least 1 degree higher than min.' });
+        return;
+    }
+
+    // FIX: Correctly update records for periods ending at 00:00
+    setHalfHourlyRecords(currentRecords => currentRecords.map(record => {
+        const isAfterStart = record.FromTime >= updatedData.startTime;
+        const isBeforeEnd = record.FromTime < updatedData.endTime;
+
+        // The condition is met if it's a normal range OR if the range ends at 00:00 and the record is after the start time.
+        if ((isAfterStart && isBeforeEnd) || (updatedData.endTime === '00:00' && isAfterStart)) {
+            return { ...record, LowTemp: updatedData.lowTemp, HighTemp: updatedData.highTemp };
         }
-        if ((Number(updatedData.highTemp) - Number(updatedData.lowTemp)) < 1) { 
-            setErrorModal({ isOpen: true, message: 'Max temp must be at least 1 degree higher than min.' }); 
-            return; 
-        }
-        setHalfHourlyRecords(c => c.map(r => (r.FromTime >= updatedData.startTime && r.FromTime < updatedData.endTime) ? { ...r, LowTemp: updatedData.lowTemp, HighTemp: updatedData.highTemp } : r));
-        handleCloseModal();
-    };
+        return record;
+    }));
+    
+    handleCloseModal();
+};
     const handleModalDelete = (chunkToDelete) => {
         setHalfHourlyRecords(currentRecords => {
             const startIndex = currentRecords.findIndex(r => r.FromTime === chunkToDelete.x1);
