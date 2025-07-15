@@ -19,16 +19,21 @@ Amplify.configure({
 // --- LAZY-LOADED PAGES ---
 const DashboardPage = React.lazy(() => import('./pages/DashboardPage'));
 const ProfileSettingsPage = React.lazy(() => import('./pages/ProfileSettingsPage'));
+const UserSignUp = React.lazy(() => import('./pages/UserSignUp'));
+const SettingsPage = React.lazy(() => import('./pages/SettingsPage'));
+const PaymentSetupPage = React.lazy(() => import('./pages/PaymentSetupPage'));
+
 
 function App() {
   return (
     <Suspense fallback={<div className="flex justify-center items-center h-screen">Loading...</div>}>
       <Routes>
         <Route path="/" element={<Layout />}>
-          {/* The index route is the default page for the parent route "/" */}
           <Route index element={<DashboardPage />} />
           <Route path="profiles" element={<ProfileSettingsPage />} />
-          {/* Add future routes here, e.g., <Route path="billing" element={<BillingPage />} /> */}
+          <Route path="settings" element={<SettingsPage />} />
+          <Route path="signup" element={<UserSignUp />} />
+          <Route path="payment-setup" element={<PaymentSetupPage />} />
         </Route>
       </Routes>
     </Suspense>

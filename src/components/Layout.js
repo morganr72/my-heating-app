@@ -1,6 +1,7 @@
 import React from 'react';
 import { Outlet, Link } from 'react-router-dom';
-import { Home, BarChart2, LogOut } from 'lucide-react';
+// 1. Import the Settings and UserPlus icons
+import { Home, BarChart2, LogOut, UserPlus, Settings } from 'lucide-react';
 import { useAuthenticator } from '@aws-amplify/ui-react';
 
 const Layout = () => {
@@ -18,6 +19,14 @@ const Layout = () => {
                 </Link>
                 <Link to="/profiles" className="p-3 mt-0 sm:mt-4 rounded-lg hover:bg-cyan-700 transition-colors" title="Profiles">
                     <BarChart2 className="w-6 h-6" />
+                </Link>
+                {/* This link is for the full sign-up flow, useful for development */}
+                <Link to="/signup" className="p-3 mt-0 sm:mt-4 rounded-lg hover:bg-cyan-700 transition-colors" title="Full Sign Up">
+                    <UserPlus className="w-6 h-6" />
+                </Link>
+                 {/* 2. Add the new link to the Settings page */}
+                <Link to="/settings" className="p-3 mt-0 sm:mt-4 rounded-lg hover:bg-cyan-700 transition-colors" title="Settings">
+                    <Settings className="w-6 h-6" />
                 </Link>
                 <div className="mt-0 sm:mt-auto">
                     <button onClick={signOut} className="p-3 rounded-lg hover:bg-red-500 transition-colors" title="Sign Out">
