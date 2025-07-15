@@ -174,8 +174,15 @@ const ProfileDetailPage = ({ profile, onBack, onSaveSuccess, isNew, allProfiles 
     const handleNewPeriod = () => { setSelectedChunk(null); setIsNewPeriod(true); setIsModalOpen(true); };
     const handleCloseModal = () => { setIsModalOpen(false); setSelectedChunk(null); setIsNewPeriod(false); };
     const handleModalSubmit = (updatedData) => {
-        if (updatedData.startTime >= updatedData.endTime) { setErrorModal({ isOpen: true, message: 'Start time must be before end time.' }); return; }
-        if ((Number(updatedData.highTemp) - Number(updatedData.lowTemp)) < 1) { setErrorModal({ isOpen: true, message: 'Max temp must be at least 1 degree higher than min.' }); return; }
+        // FIX: Allow for periods that end at midnight (00:00)
+        if (updatedData.startTime >= updatedData.endTime && updatedData.endTime !== '00:00') {
+            setErrorModal({ isOpen: true, message: 'Start time must be before end time.' });
+            return;
+        }
+        if ((Number(updatedData.highTemp) - Number(updatedData.lowTemp)) < 1) { 
+            setErrorModal({ isOpen: true, message: 'Max temp must be at least 1 degree higher than min.' }); 
+            return; 
+        }
         setHalfHourlyRecords(c => c.map(r => (r.FromTime >= updatedData.startTime && r.FromTime < updatedData.endTime) ? { ...r, LowTemp: updatedData.lowTemp, HighTemp: updatedData.highTemp } : r));
         handleCloseModal();
     };
